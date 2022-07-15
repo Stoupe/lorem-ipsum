@@ -13,7 +13,10 @@ const Profile: NextPage = () => {
 		},
 	});
 
-	const { data } = trpc.useQuery(["example.get-user-stats"]);
+	const { data: userStats } = trpc.useQuery(["example.get-user-stats"]);
+	const { mutate: deleteUserStats } = trpc.useMutation(
+		"example.delete-user-stats"
+	);
 
 	if (!session) return null;
 
@@ -22,7 +25,15 @@ const Profile: NextPage = () => {
 			<NavBar />
 			<h1>Profile</h1>
 			<p>{session.user?.name}</p>
-			<pre>{JSON.stringify(data, null, 2)}</pre>
+			<button
+				className="btn"
+				onClick={async () => {
+					deleteUserStats();
+				}}
+			>
+				Delete all results
+			</button>
+			<pre>{JSON.stringify(userStats, null, 2)}</pre>
 		</>
 	);
 };
