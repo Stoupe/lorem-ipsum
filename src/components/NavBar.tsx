@@ -1,11 +1,27 @@
 import { NextPage } from "next";
+import { signIn, signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 
 const NavBar: NextPage = () => {
+	const { data: session, status } = useSession();
 	return (
-		<header className="navbar bg-base-200">
+		<header className="navbar bg-base-200 gap-4">
 			<div className="flex-1">
-				<a className="btn btn-ghost normal-case text-xl">Lorem Ipsum Typer</a>
+				<Link href={"/"}>
+					<h1 className="btn btn-ghost normal-case text-xl">
+						Lorem Ipsum Typer
+					</h1>
+				</Link>
 			</div>
+			{status === "authenticated" ? (
+				<>
+					<Link href={"/profile"}>Profile</Link>
+					<button onClick={() => signOut()}>Logout</button>
+				</>
+			) : (
+				<button onClick={() => signIn()}>Login</button>
+			)}
+
 			<div className="flex-none">
 				<button className="btn btn-square btn-ghost">
 					<svg
