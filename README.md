@@ -11,6 +11,6 @@ Created using the T3 stack + daisyui
 - [ ] Show timer, wps/wpm & accuracy
 - [ ] Record stats after typing
 - [ ] Login with other providers
-- [ ] Deploy
+- [x] Deploy
 - [ ] Themes?
   
