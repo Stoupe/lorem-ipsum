@@ -19,7 +19,7 @@ const NavBar: NextPage = () => {
 					<button onClick={() => signOut()}>Logout</button>
 				</>
 			) : (
-				<button onClick={() => signIn()}>Login</button>
+				<button onClick={() => signIn("google")}>Login with Google</button>
 			)}
 
 			<div className="flex-none">
