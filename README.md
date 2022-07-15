@@ -1,3 +1,16 @@
-# Create T3 App
+# Lorem Ipsum Typer
 
-This is an app bootstrapped according to the [init.tips](https://init.tips) stack, also known as the T3-Stack.
+Created using the T3 stack + daisyui
+
+## Todo
+
+- [ ] Profile page with typing stats
+- [ ] Public stats page
+- [ ] Clean ui
+- [ ] Able to record speeds logged in or not (local storage?)
+- [ ] Show timer, wps/wpm & accuracy
+- [ ] Record stats after typing
+- [ ] Login with other providers
+- [ ] Deploy
+- [ ] Themes?
+  
