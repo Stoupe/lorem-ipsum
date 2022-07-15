@@ -61,7 +61,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
 
-    Result Result[]
+    results Result[]
 }
 
 model VerificationToken {

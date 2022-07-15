@@ -9,6 +9,18 @@ export const exampleRouter = createRouter()
 			return words;
 		},
 	})
+	.query("get-user-stats", {
+		resolve: async ({ ctx, input }) => {
+			const session = ctx.session;
+			if (!session) {
+				throw new Error("Not logged in");
+			}
+			return await ctx.prisma.user.findFirst({
+				where: { id: session.userId as string },
+				select: { results: { select: { timeTaken: true, accuracy: true } } },
+			});
+		},
+	})
 	.mutation("create-result", {
 		input: z.object({
 			userId: z.string(),
