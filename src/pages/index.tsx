@@ -2,28 +2,75 @@ import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
-import { KeyboardEvent, useEffect, useState } from "react";
+import { KeyboardEvent, useEffect, useState, useMemo } from "react";
 import NavBar from "../components/NavBar";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
+	console.log("rendering");
+
 	const { data: text, refetch } = trpc.useQuery(["example.getWords"]);
+
 	const { mutate: createResult } = trpc.useMutation("example.create-result");
+
 	const [input, setInput] = useState("");
 	const { data: session, status: sessionStatus } = useSession();
 
-	const finished = input.length === text?.length;
+	const [gameState, setGameState] = useState<"idle" | "typing" | "finished">(
+		"idle"
+	);
+
+	const [timeTaken, setTimeTaken] = useState(0);
+
+	const [accuracy, setAccuracy] = useState(0);
+	const [timeStarted, setTimeStarted] = useState<number>();
+
+	const finished = input.length === text?.length ?? -1;
+
 	useEffect(() => {
-		if (finished && session?.user?.id) {
-			createResult({
-				text: text,
-				userId: session.user.id,
-				accuracy: -1,
-				timeTaken: -1,
-			});
+		let interval: any;
+		if (gameState === "typing") {
+			interval = setInterval(() => {
+				setTimeTaken((prevTime) => prevTime + 10);
+			}, 10);
+		} else {
+			clearInterval(interval);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [finished]);
+		return () => clearInterval(interval);
+	}, [gameState]);
+
+	useEffect(() => {
+		if (input.length === 1 && gameState === "idle") {
+			setGameState("typing");
+		}
+
+		if (input.length === text?.length) {
+			setGameState("finished");
+		}
+	}, [input.length, gameState]);
+
+	useEffect(() => {
+		switch (gameState) {
+			case "idle":
+				break;
+			case "typing":
+				break;
+			case "finished":
+				if (text && session?.user?.id) {
+					console.log("creating test result...");
+					createResult({
+						text: text,
+						userId: session.user.id,
+						accuracy: -1,
+						timeTaken: timeTaken,
+					});
+				}
+				setTimeTaken(0);
+				setGameState("idle");
+				setInput("");
+				break;
+		}
+	}, [gameState]);
 
 	if (sessionStatus === "loading" || !text) {
 		return <div>Loading...</div>;
@@ -65,7 +112,7 @@ const Home: NextPage = () => {
 			<div className="p-5">
 				<p>
 					<span className="text-green-600">{text.slice(0, input.length)}</span>
-					<span>{text.slice(input.length, text.length)}</span>
+					<span>{text.slice(input.length, text?.length)}</span>
 				</p>
 
 				<form className="form-control">
@@ -77,6 +124,10 @@ const Home: NextPage = () => {
 						value={input}
 					/>
 				</form>
+
+				<p>state: {gameState}</p>
+				<p>time: {timeTaken / 100}s</p>
+				<p>accuracy: {accuracy}</p>
 
 				<button
 					className="btn"
